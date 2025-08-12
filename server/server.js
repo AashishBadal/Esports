@@ -1,17 +1,27 @@
-import express from 'express'
-import cors from 'cors'
-import 'dotenv/config'
-import connectDB from './config/db.js'
-import authRoutes from './routes/authRoutes.js'
+import express from 'express';
+import cors from 'cors';
+import 'dotenv/config';
+import connectDB from './config/db.js';
+import authRoutes from './routes/authRoutes.js';
+import cookieParser from "cookie-parser";
 
-const app = express()
-const PORT = process.env.PORT || 3000
+const app = express();
+const PORT = process.env.PORT || 3000;
 
 connectDB();
 
-app.use(express.json())
-app.use(cors())
+// Middleware
+app.use(express.json());
 
+// CORS config to allow cookies
+app.use(cors({
+  origin: 'http://localhost:5173', // your frontend URL
+  credentials: true
+}));
+
+app.use(cookieParser()); // ✅ put BEFORE routes
+
+// Routes
 app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => {
@@ -22,4 +32,3 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
-
