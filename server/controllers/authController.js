@@ -15,16 +15,17 @@ export const signup = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ error: 'User already exists' });
+    if (!name || !email || !password || !role) {
+      return res.json({ success: false, message: "All fields are required" });
     }
 
-    // Hash password
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: "User already exists" });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
     const user = await User.create({
       name,
       email,
@@ -32,13 +33,19 @@ export const signup = async (req, res) => {
       role
     });
 
-    // Send token
     const token = generateToken(user._id, user.role);
-    res.status(201).json({ token, user });
+
+    res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+      token,
+      user
+    });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ success: false, message: err.message });
   }
 };
+
 
 // @desc    Login user
 // @route   POST /api/auth/login
@@ -46,22 +53,29 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find user
+    if (!email || !password) {
+      return res.json({ success: false, message: "All fields are required" });
+    }
+
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ error: 'Invalid email or password' });
+      return res.status(400).json({ success: false, message: "Invalid email or password" });
     }
 
-    // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ error: 'Invalid email or password' });
+      return res.status(400).json({ success: false, message: "Invalid email or password" });
     }
 
-    // Send token
     const token = generateToken(user._id, user.role);
-    res.json({ token, user });
+
+    res.json({
+      success: true,
+      message: "Login successful",
+      token,
+      user
+    });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ success: false, message: err.message });
   }
 };
