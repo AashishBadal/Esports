@@ -1,12 +1,12 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
 
-const Home = () => {
+const Tournaments = () => {
   return (
     <div>
-      <Navbar/>
+        <Navbar/>
     </div>
   )
 }
 
-export default Home
+export default Tournaments

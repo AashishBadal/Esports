@@ -20,7 +20,7 @@ axios.defaults.withCredentials = true; // Send cookies with requests
       if (state === "Login") {
         const { data } = await axios.post(
           "http://localhost:3000/api/auth/login",
-          { email, password }
+          { email, password },{ withCredentials: true }
         );
         if (data.success) {
           navigate("/");
@@ -30,7 +30,7 @@ axios.defaults.withCredentials = true; // Send cookies with requests
       } else {
         const { data } = await axios.post(
           "http://localhost:3000/api/auth/signup",
-          { name, email, password, role }
+          { name, email, password, role },{ withCredentials: true }
         );
         if (data.success) {
           navigate("/");
@@ -44,7 +44,7 @@ axios.defaults.withCredentials = true; // Send cookies with requests
   };
 
   return (
-    <div className="h-screen bg-gray-900 flex items-center justify-center">
+    <div className="h-screen bg-gray-900 flex items-center justify-center text-white">
       <div
         className={`w-[30%] bg-gray-800 p-6 ${
           state === "Login" ? "h-[50vh]" : "h-[65vh]"
