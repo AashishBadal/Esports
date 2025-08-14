@@ -9,7 +9,7 @@ import About from './pages/About';
 
 const App = () => {
   return (
-    <div>
+    <div className='bg-gray-900'>
       <ToastContainer />
       <Routes>
         <Route path='/login' element={<Login/>}/>
