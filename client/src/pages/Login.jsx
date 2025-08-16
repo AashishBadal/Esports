@@ -11,8 +11,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-axios.defaults.withCredentials = true; // Send cookies with requests
-
+  axios.defaults.withCredentials = true; // Send cookies with requests
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -20,20 +19,38 @@ axios.defaults.withCredentials = true; // Send cookies with requests
       if (state === "Login") {
         const { data } = await axios.post(
           "http://localhost:3000/api/auth/login",
-          { email, password },{ withCredentials: true }
+          { email, password },
+          { withCredentials: true }
         );
         if (data.success) {
-          navigate("/");
+          // Role-based navigation after login
+          if (data.user.role === "player") {
+            navigate("/player-dashboard");
+          } else if (data.user.role === "organizer") {
+            navigate("/organizer");
+          } else {
+            navigate("/"); // Default fallback
+          }
+          toast.success("Login successful!");
         } else {
           toast.error(data.message);
         }
       } else {
         const { data } = await axios.post(
           "http://localhost:3000/api/auth/signup",
-          { name, email, password, role },{ withCredentials: true }
+          { name, email, password, role },
+          { withCredentials: true }
         );
         if (data.success) {
-          navigate("/");
+          // Role-based navigation after signup
+          if (role === "player") {
+            navigate("/player-dashboard");
+          } else if (role === "organizer") {
+            navigate("/organizer-dashboard");
+          } else {
+            navigate("/"); // Default fallback
+          }
+          toast.success("Account created successfully!");
         } else {
           toast.error(data.message);
         }
@@ -124,7 +141,7 @@ axios.defaults.withCredentials = true; // Send cookies with requests
 
           <button
             type="submit"
-            className="bg-amber-500 w-full p-2 rounded-2xl mt-4"
+            className="bg-amber-500 w-full p-2 rounded-2xl mt-4 hover:bg-amber-600 transition-colors"
           >
             {state}
           </button>
@@ -139,11 +156,11 @@ axios.defaults.withCredentials = true; // Send cookies with requests
         {state === "Login" ? (
           <div>
             <h1 className="text-2xl font-bold text-center">
-              Don’t have an account?
+              Don't have an account?
             </h1>
             <button
               onClick={() => setState("SignUp")}
-              className="bg-amber-400 p-2 w-full rounded-xl mt-4"
+              className="bg-amber-400 p-2 w-full rounded-xl mt-4 hover:bg-amber-500 transition-colors"
             >
               Create an account here
             </button>
@@ -155,7 +172,7 @@ axios.defaults.withCredentials = true; // Send cookies with requests
             </h1>
             <button
               onClick={() => setState("Login")}
-              className="bg-amber-400 p-2 w-full rounded-xl mt-4"
+              className="bg-amber-400 p-2 w-full rounded-xl mt-4 hover:bg-amber-500 transition-colors"
             >
               Login here
             </button>

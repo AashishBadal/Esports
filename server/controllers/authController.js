@@ -38,12 +38,26 @@ export const signup = async (req, res) => {
     const { name, email, password, role } = req.body;
 
     if (!name || !email || !password || !role) {
-      return res.status(400).json({ success: false, message: "All fields are required" });
+      return res.status(400).json({ 
+        success: false, 
+        message: "All fields are required" 
+      });
+    }
+
+    // Validate role
+    if (!["player", "organizer"].includes(role)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Invalid role. Must be either 'player' or 'organizer'" 
+      });
     }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ success: false, message: "User already exists" });
+      return res.status(400).json({ 
+        success: false, 
+        message: "User already exists" 
+      });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -55,7 +69,7 @@ export const signup = async (req, res) => {
       role
     });
 
-    sendTokenResponse(user, 201, res, "User registered successfully");
+    sendTokenResponse(user, 201, res, `${role.charAt(0).toUpperCase() + role.slice(1)} account created successfully`);
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
@@ -68,28 +82,40 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ success: false, message: "All fields are required" });
+      return res.status(400).json({ 
+        success: false, 
+        message: "All fields are required" 
+      });
     }
 
+    // Find user and include role information
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ success: false, message: "Invalid email or password" });
+      return res.status(400).json({ 
+        success: false, 
+        message: "Invalid email or password" 
+      });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ success: false, message: "Invalid email or password" });
+      return res.status(400).json({ 
+        success: false, 
+        message: "Invalid email or password" 
+      });
     }
 
-    sendTokenResponse(user, 200, res, "Login successful");
+    // Send success response with role information
+    sendTokenResponse(user, 200, res, `Welcome back, ${user.role}!`);
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 };
 
 // @desc Logout user (clear cookie)
+// @route POST /api/auth/logout
 export const logout = (req, res) => {
-  res.clearCookie("token", {
+  res.clearCookie("jwt", {
     httpOnly: true,
     sameSite: "strict",
     secure: process.env.NODE_ENV === "production",
@@ -97,4 +123,30 @@ export const logout = (req, res) => {
   });
 
   res.json({ success: true, message: "Logged out successfully" });
+};
+
+// @desc Get current user profile
+// @route GET /api/auth/profile
+export const getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "User not found" 
+      });
+    }
+
+    res.json({
+      success: true,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 };
