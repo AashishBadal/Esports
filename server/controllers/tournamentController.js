@@ -5,7 +5,7 @@ import Tournament from "../models/tournamentModel.js";
 // @access  Public (no auth)
 export const createTournament = async (req, res) => {
   try {
-    const { name, game, location, startDate, endDate, prizePool, organizer } = req.body;
+    const { name, game, location, startDate, endDate, prizePool, organizer,entryFee,maxParticipants } = req.body;
 
     if (!name || !game || !location || !startDate || !endDate) {
       return res.status(400).json({ message: "Please fill all required fields" });
@@ -18,6 +18,8 @@ export const createTournament = async (req, res) => {
       startDate,
       endDate,
       prizePool,
+      entryFee,
+      maxParticipants,
       organizer: organizer || null, // accept from body or null
     });
 

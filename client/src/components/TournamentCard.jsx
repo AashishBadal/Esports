@@ -35,7 +35,9 @@ const TournamentList = () => {
               key={t._id}
               className="bg-gray-800 rounded-2xl shadow-lg p-5 hover:shadow-orange-500/50 transition-shadow duration-300 border border-gray-700"
             >
-              <h2 className="text-xl font-semibold mb-2 text-white">{t.name}</h2>
+              <h2 className="text-xl font-semibold mb-2 text-white">
+                {t.name}
+              </h2>
               <p className="text-gray-300 mb-2">{t.game}</p>
 
               <div className="flex items-center gap-2 text-gray-400 mb-1">
@@ -54,6 +56,15 @@ const TournamentList = () => {
               <div className="flex items-center gap-2 text-orange-400 font-semibold mt-3">
                 <Trophy size={18} />
                 <span>Prize: Rs. {t.prizePool}</span>
+              </div>
+
+              {/* ✅ Entry Fee */}
+              <div className="flex items-center gap-2 text-orange-300 font-medium mt-2">
+                💰 <span>Entry Fee: Rs. {t.entryFee}</span>
+              </div>
+
+              <div className="flex items-center gap-2 text-gray-300 font-medium mt-2">
+                👥 <span>Max Participants: {t.maxParticipants}</span>
               </div>
 
               <button

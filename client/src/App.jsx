@@ -6,6 +6,7 @@ import Home from './pages/Home'
 import Tournaments from './pages/Tournaments';
 import Support from './pages/Support';
 import About from './pages/About';
+import Organizer from './pages/Organizer';
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route path='/tournaments' element={<Tournaments/>}/>
         <Route path='/support' element={<Support/>}/>
         <Route path='/about' element={<About/>}/>
+        <Route path='/organizer' element={<Organizer/>}/>
       </Routes>
     </div>
   )

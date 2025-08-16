@@ -27,6 +27,8 @@ const tournamentSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    entryFee: { type: Number, default: 0 },
+    maxParticipants: { type: Number, default: 16 },
     organizer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
